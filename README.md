@@ -31,5 +31,6 @@ I tested the library and got average sorting times for arrays of various sizes w
 ![Graph 2](https://raw.githubusercontent.com/Valyreon/net-parallel-quicksort/main/graph2.png)
 
 From the graphs we can see that the performance gain is significant for larger arrays, on arrays with length 250k the parallel algorithm is on average 3 times as fast as the serial version with the difference increasing.
+
 ---
 
