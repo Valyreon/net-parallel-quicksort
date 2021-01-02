@@ -4,14 +4,10 @@ This is a library for parallel quicksort I created after doing a project for a c
 
 ## Usage
 
-To use you can install the nuget package.
-
 The sort is an extension method for IEnumerable and it's called exactly like LINQ's OrderBy and has async version as well. Example:
 ```csharp
-var array = Utilities.GenerateRandomArray(ArraySize);
-
-var sortedArrayAscending = array.ParallelOrderBy(x => x).ToArray();
-var sortedArrayDescending = await array.ParallelOrderByDescendingAsync(x => x, 3).ToArray();
+var sortedArrayAscending = list.ParallelOrderBy(x => x).ToArray();
+var sortedArrayDescending = await list.ParallelOrderByDescendingAsync(x => x, 3).ToArray();
 ```
 You can also specify the max degree of parallelism that the algorithm will try to use as the second parameter. Default value is 4. It uses the .NET Task class to achieve concurrency so of course parallelism isn't guaranteed because the scheduling itself is left to the OS.
 
@@ -21,13 +17,15 @@ Quicksort algorithm here chooses the middle most element as the pivot and then '
 
 I played around with Insertion algorithm and tested times, and 16 seemed like a good threshold. At first I tested times when I called Insertion sort in the new Task but that caused greater sorting times with overhead of creating new Tasks and scheduling them (overthreading basically).
 
-Also, due to overhead of creating new Tasks and overthreading there is a threshold in array size before which serial quicksort is better than parallel. After testing over 100 000 iterations against LINQ's OrderBy, the average point in size was 7519. So i decided that for collections that have 8000 members or less, the algorithm will just revert back to LINQ's OrderBy.
+Also, due to overhead of creating new Tasks and overthreading there is a threshold in array size before which serial quicksort is better than parallel. After testing over 100 000 iterations against LINQ's OrderBy on randomly generated arrays, the average point in size was 7519. So i decided that for collections that have 8000 members or less, the algorithm will just revert back to LINQ's OrderBy.
 
 ## Performance analysis
 
-I tested the library and got average sorting times for arrays of various sizes with 250 calls for each array size. You can find the test in the AveragesTest in the Tests project. Here are the generated graphs from the results:
+I tested the library and got average sorting times for arrays of various sizes with 250 calls for each array size. The max concurrency was the default, 4. You can find the test in the AveragesTest in the Tests project. Here are the generated graphs from the results:
 
-<img src="https://raw.githubusercontent.com/Valyreon/net-parallel-quicksort/main/graph1.png" width="800">
+![Graph 1](https://raw.githubusercontent.com/Valyreon/net-parallel-quicksort/main/graph1.png)
 
-<img src="https://raw.githubusercontent.com/Valyreon/net-parallel-quicksort/main/graph2.png" width="800">
+![Graph 2](https://raw.githubusercontent.com/Valyreon/net-parallel-quicksort/main/graph2.png)
+
+From the graphs we can see that the performance gain is significant for larger arrays, on arrays with length 250k the parallel algorithm is on average 3 times as fast as the serial version.
 

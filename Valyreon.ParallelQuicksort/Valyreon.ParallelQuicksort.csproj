@@ -5,7 +5,7 @@
     <Authors>Luka Budrak</Authors>
     <Description>A library for sorting collections using parallel quicksort.</Description>
     <PackageProjectUrl>https://github.com/Valyreon/net-parallel-quicksort</PackageProjectUrl>
-    <PackageLicenseExpression>https://licenses.nuget.org/MIT</PackageLicenseExpression>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
   </PropertyGroup>
 
 </Project>
