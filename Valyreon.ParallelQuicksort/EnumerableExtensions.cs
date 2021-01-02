@@ -78,7 +78,6 @@ namespace Valyreon.ParallelQuicksort
                 return descending ? source.OrderByDescending(keySelector) : source.OrderBy(keySelector);
             }
 
-
             var sorter = descending
                 ? (ISorter)new SorterDescending<TKey>(source.Select(keySelector).ToArray(), concurrencyLevel)
                 : new Sorter<TKey>(source.Select(keySelector).ToArray(), concurrencyLevel);

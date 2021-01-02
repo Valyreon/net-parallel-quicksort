@@ -1,44 +1,48 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Valyreon.ParallelQuicksort.Tests
 {
-	public static class MyAssert
-	{
-		public static void IsSorted(IEnumerable<int> arr)
-		{
-			Assert.IsTrue(IsSortedHelper(arr), "Array is not sorted.");
-		}
+    public static class MyAssert
+    {
+        public static void IsSorted<TSource, TKey>(IEnumerable<TSource> arr, Func<TSource, TKey> keySelector)
+            where TKey : IComparable, IComparable<TKey>
+        {
+            Assert.IsTrue(IsSortedHelper(arr, keySelector), "Array is not sorted.");
+        }
 
-		public static void IsSortedDescending(IEnumerable<int> arr)
-		{
-			Assert.IsTrue(IsSortedHelper(arr, true), "Array is not sorted.");
-		}
+        public static void IsSortedDescending<TSource, TKey>(IEnumerable<TSource> arr, Func<TSource, TKey> keySelector)
+            where TKey : IComparable, IComparable<TKey>
+        {
+            Assert.IsTrue(IsSortedHelper(arr, keySelector, true), "Array is not sorted.");
+        }
 
-		private static bool IsSortedHelper(IEnumerable<int> arr, bool descending = false)
-		{
-			Func<int, int, bool> comparer = descending ? (x, y) => x < y : (x, y) => x > y;
+        private static bool IsSortedHelper<TSource, TKey>(IEnumerable<TSource> arr, Func<TSource, TKey> keySelector, bool descending = false)
+            where TKey : IComparable, IComparable<TKey>
+        {
+            Func<TKey, TKey, bool> comparer = descending ? (x, y) => x.CompareTo(y) < 0 : (x, y) => x.CompareTo(y) > 0;
 
-			var isFirst = true;
-			var last = 0;
-			foreach(var x in arr)
-			{
-				if(isFirst)
-				{
-					isFirst = false;
-					last = x;
-					continue;
-				}
-				else if(comparer(last, x))
-				{
-					return false;
-				}
+            var isFirst = true;
+            TKey last = default;
+            foreach (var x in arr.Select(keySelector))
+            {
+                if (isFirst)
+                {
+                    isFirst = false;
+                    last = x;
+                    continue;
+                }
+                else if (comparer(last, x))
+                {
+                    return false;
+                }
 
-				last = x;
-			}
+                last = x;
+            }
 
-			return true;
-		}
-	}
+            return true;
+        }
+    }
 }
