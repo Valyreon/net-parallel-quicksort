@@ -27,6 +27,7 @@ Also, due to overhead of creating new Tasks and overthreading there is a thresho
 
 I tested the library and got average sorting times for arrays of various sizes with 250 calls for each array size. You can find the test in the AveragesTest in the Tests project. Here are the generated graphs from the results:
 
-![Graph 1](https://github.com/Valyreon/net-parallel-quicksort/master/graph1.png | width=500)
-![Graph 2](https://github.com/Valyreon/net-parallel-quicksort/master/graph2.png | width=500)
+<img src="https://raw.githubusercontent.com/Valyreon/net-parallel-quicksort/main/graph1.png" width="800">
+
+<img src="https://raw.githubusercontent.com/Valyreon/net-parallel-quicksort/main/graph2.png" width="800">
 
