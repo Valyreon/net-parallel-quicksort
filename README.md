@@ -1,7 +1,7 @@
 # .NET Parallel Quicksort Library
 ![](https://img.shields.io/badge/NuGet-v1.0.0-blueviolet.svg)
 
-This is a library for parallel quicksort I created after running into the problem of false sharing when working on some project. First I solved the problem by padding the variables to fill the cache line but I still couldn't get quite the best speed. In the end, the solution was simple, instead of sorting the array, sort a map which contains element indexes and then just return the values in that order. Then I wanted to see what kind of performance I could get out of a parallel quicksort algorithm so I created this .NET Standard library and tinkered the standard algorithm to get the best numbers.
+This is a library for parallel quicksort I created after running into the problem of false sharing when working on some project. First I solved the problem by padding the variables to fill the cache line but I still couldn't get quite the best speed. In the end, the solution was simple, instead of sorting the array, sort a map which contains element indexes and then just return the values in that order. Then I wanted to see what kind of performance I could get out of a parallel quicksort algorithm so I created this .NET Standard library and tinkered with the standard algorithm to get the best numbers.
 
 ## Usage
 
