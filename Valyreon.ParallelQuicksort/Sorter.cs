@@ -201,6 +201,7 @@ namespace Valyreon.ParallelQuicksort
                     _ = runningTasks.Remove(task);
                     if (runningTasks.Count == 0)
                     {
+                        IsCompleted = true;
                         Completed?.Invoke();
                     }
                 }

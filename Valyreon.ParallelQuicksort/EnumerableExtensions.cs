@@ -90,17 +90,17 @@ namespace Valyreon.ParallelQuicksort
             {
                 while (!sorter.IsCompleted)
                 {
-                    await Task.Delay(5000, cancelSource.Token);
+                    try
+                    {
+                        await Task.Delay(5000, cancelSource.Token);
+                    }
+                    catch (TaskCanceledException)
+                    {
+                    }
                 }
             });
 
-            try
-            {
-                Task.WaitAll(waitTask);
-            }
-            catch (AggregateException)
-            {
-            }
+            Task.WaitAll(waitTask);
 
             var arrayToSort = source.ToArray();
             return sorter.GetMap().Select(x => arrayToSort[x]);
@@ -122,19 +122,19 @@ namespace Valyreon.ParallelQuicksort
             sorter.Completed += () => cancelSource.Cancel();
 
             sorter.Start();
-            try
+            await Task.Run(async () =>
             {
-                await Task.Run(async () =>
+                while (!sorter.IsCompleted)
                 {
-                    while (!sorter.IsCompleted)
+                    try
                     {
                         await Task.Delay(5000, cancelSource.Token);
                     }
-                });
-            }
-            catch (TaskCanceledException)
-            {
-            }
+                    catch (TaskCanceledException)
+                    {
+                    }
+                }
+            });
 
             var arrayToSort = source.ToArray();
             return sorter.GetMap().Select(x => arrayToSort[x]);

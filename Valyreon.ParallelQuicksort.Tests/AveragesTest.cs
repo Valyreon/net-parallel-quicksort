@@ -43,7 +43,7 @@ namespace Valyreon.ParallelQuicksort.Tests
                 var linqTimes = new List<long>();
 
                 // takes ~20s for 1
-                for (var j = 0; j < 250; ++j)
+                for (var j = 0; j < 10; ++j)
                 {
                     var array = Utilities.GenerateRandomArray(sizes[i]);
 
