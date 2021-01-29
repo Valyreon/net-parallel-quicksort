@@ -73,14 +73,15 @@ namespace Valyreon.ParallelQuicksort
         private static IEnumerable<TSource> ParallelOrderByInternal<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, int concurrencyLevel = 4, bool descending = false)
             where TKey : IComparable, IComparable<TKey>
         {
-            if (source.Count() <= ParallelThreshold)
+            var enumerable = source as TSource[] ?? source.ToArray();
+            if (enumerable.Count() <= ParallelThreshold)
             {
-                return descending ? source.OrderByDescending(keySelector) : source.OrderBy(keySelector);
+                return descending ? enumerable.OrderByDescending(keySelector) : enumerable.OrderBy(keySelector);
             }
 
             var sorter = descending
-                ? (ISorter)new SorterDescending<TKey>(source.Select(keySelector).ToArray(), concurrencyLevel)
-                : new Sorter<TKey>(source.Select(keySelector).ToArray(), concurrencyLevel);
+                ? (ISorter)new SorterDescending<TKey>(enumerable.Select(keySelector).ToArray(), concurrencyLevel)
+                : new Sorter<TKey>(enumerable.Select(keySelector).ToArray(), concurrencyLevel);
             var cancelSource = new CancellationTokenSource();
 
             sorter.Completed += () => cancelSource.Cancel();
@@ -98,25 +99,26 @@ namespace Valyreon.ParallelQuicksort
                     {
                     }
                 }
-            });
+            }, cancelSource.Token);
 
             Task.WaitAll(waitTask);
 
-            var arrayToSort = source.ToArray();
+            var arrayToSort = enumerable.ToArray();
             return sorter.GetMap().Select(x => arrayToSort[x]);
         }
 
         private static async Task<IEnumerable<TSource>> ParallelOrderByInternalAsync<TSource, TKey>(IEnumerable<TSource> source, Func<TSource, TKey> keySelector, int concurrencyLevel = 4, bool descending = false)
             where TKey : IComparable, IComparable<TKey>
         {
-            if (source.Count() <= ParallelThreshold)
+            var enumerable = source as TSource[] ?? source.ToArray();
+            if (enumerable.Count() <= ParallelThreshold)
             {
-                return descending ? source.OrderByDescending(keySelector) : source.OrderBy(keySelector);
+                return descending ? enumerable.OrderByDescending(keySelector) : enumerable.OrderBy(keySelector);
             }
 
             var sorter = descending
-                ? (ISorter)new SorterDescending<TKey>(source.Select(keySelector).ToArray(), concurrencyLevel)
-                : new Sorter<TKey>(source.Select(keySelector).ToArray(), concurrencyLevel);
+                ? (ISorter)new SorterDescending<TKey>(enumerable.Select(keySelector).ToArray(), concurrencyLevel)
+                : new Sorter<TKey>(enumerable.Select(keySelector).ToArray(), concurrencyLevel);
             var cancelSource = new CancellationTokenSource();
 
             sorter.Completed += () => cancelSource.Cancel();
@@ -134,9 +136,9 @@ namespace Valyreon.ParallelQuicksort
                     {
                     }
                 }
-            });
+            }, cancelSource.Token);
 
-            var arrayToSort = source.ToArray();
+            var arrayToSort = enumerable.ToArray();
             return sorter.GetMap().Select(x => arrayToSort[x]);
         }
     }

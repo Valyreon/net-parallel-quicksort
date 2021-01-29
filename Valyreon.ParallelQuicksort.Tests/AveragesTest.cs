@@ -17,8 +17,8 @@ namespace Valyreon.ParallelQuicksort.Tests
         private static void Warmup()
         {
             var array = Utilities.GenerateRandomArray(1000000);
-            var result1 = array.ParallelOrderBy(x => x).ToArray();
-            var result2 = array.OrderBy(x => x).ToArray();
+            _ = array.ParallelOrderBy(x => x).ToArray();
+            _ = array.OrderBy(x => x).ToArray();
         }
 
         private static int MyRound(double d)
@@ -48,20 +48,17 @@ namespace Valyreon.ParallelQuicksort.Tests
                     var array = Utilities.GenerateRandomArray(sizes[i]);
 
                     var stopwatch = Stopwatch.StartNew();
-                    var result1 = array.ParallelOrderBy(x => x).ToArray();
+                    _ = array.ParallelOrderBy(x => x).ToArray();
                     stopwatch.Stop();
                     paralellTimes.Add(stopwatch.ElapsedMilliseconds);
 
                     stopwatch = Stopwatch.StartNew();
-                    var result2 = array.OrderBy(x => x).ToArray();
+                    _ = array.OrderBy(x => x).ToArray();
                     stopwatch.Stop();
                     linqTimes.Add(stopwatch.ElapsedMilliseconds);
                 }
 
-                lines.Add(string.Format("{0},{1},{2}",
-                    sizesFriendly[i],
-                    MyRound(paralellTimes.Average()),
-                    MyRound(linqTimes.Average())));
+                lines.Add($"{sizesFriendly[i]},{MyRound(paralellTimes.Average())},{MyRound(linqTimes.Average())}");
             }
 
             File.WriteAllLines("averages.csv", lines);
@@ -75,7 +72,7 @@ namespace Valyreon.ParallelQuicksort.Tests
             Warmup();
             // takes ~4s for 100
             // last result 7519 over 100k iterations
-            for (var i = 0; i < 100000; ++i)
+            for (var i = 0; i < 5; ++i)
             {
                 var size = 5000;
                 var found = false;
@@ -92,6 +89,8 @@ namespace Valyreon.ParallelQuicksort.Tests
                     var result2 = array.OrderBy(x => x).ToArray();
                     stopwatch2.Stop();
                     //MyAssert.IsSorted(result2);
+
+                    Assert.IsTrue(result1.SequenceEqual(result2), "Both results should be in the same order.");
 
                     if (stopwatch2.ElapsedMilliseconds > stopwatch1.ElapsedMilliseconds)
                     {

@@ -139,7 +139,7 @@ namespace Valyreon.ParallelQuicksort
                                 }
                             }
 
-                            // if we couldnt start a new thread because max parallelism is reached do the part here
+                            // if we couldn't start a new thread because max parallelism is reached do the part here
                             if (!deferred)
                             {
                                 QuickSort(left, j);
@@ -178,10 +178,10 @@ namespace Valyreon.ParallelQuicksort
         {
             for (var i = startIndex + 1; i <= endIndex; ++i)
             {
-                var key = array[map[i]];
+                var compareKey = array[map[i]];
                 var index = map[i];
                 var j = i - 1;
-                while (j >= startIndex && array[map[j]].CompareTo(key) > 0)
+                while (j >= startIndex && array[map[j]].CompareTo(compareKey) > 0)
                 {
                     map[j + 1] = map[j];
                     --j;
@@ -199,15 +199,20 @@ namespace Valyreon.ParallelQuicksort
                 lock (key)
                 {
                     _ = runningTasks.Remove(task);
-                    if (runningTasks.Count == 0)
+                    if (runningTasks.Count != 0)
                     {
-                        IsCompleted = true;
-                        Completed?.Invoke();
+                        return;
                     }
+
+                    IsCompleted = true;
+                    Completed?.Invoke();
                 }
             });
 
-            runningTasks.Add(task);
+            lock (key)
+            {
+                runningTasks.Add(task);
+            }
             task.Start();
         }
     }

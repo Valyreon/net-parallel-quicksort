@@ -12,7 +12,7 @@ namespace Valyreon.ParallelQuicksort
 
         /// <summary>
         /// Starts the first task that uses quicksort to sort the array. This task will should create other tasks
-        /// as neccessary.
+        /// as necessary.
         /// </summary>
         void Start();
 
